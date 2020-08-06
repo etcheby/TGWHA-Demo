@@ -1,4 +1,5 @@
 # TGWHA
+Terraform v0.11.14 or above
 Terraform Script for Check Point Cloudguard TGW HA deployment - Recommended for demos or POCs.
 Assumes you're willing to deploy Mgmt in AWS. Tweak script accordingly should you have on-prem Mgmt. 
 
