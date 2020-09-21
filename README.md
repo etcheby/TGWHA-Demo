@@ -19,6 +19,8 @@ In this example I'm using local credentials file in the provider.tf file. Change
 
 ![alt text](https://github.com/etcheby/TGWHA/blob/master/Authentication.png)
 
-# Check Point TGW High Availability Admin Guide https://sc1.checkpoint.com/documents/IaaS/WebAdminGuides/EN/CP_CloudGuard_for_AWS_Transit_Gateway_High_Availability/Default.htm
-Continue from page 24/34 to configure the cluster object in Smart Console. 
+# Check Point TGW High Availability Admin Guide 
+* https://sc1.checkpoint.com/documents/IaaS/WebAdminGuides/EN/CP_CloudGuard_for_AWS_Transit_Gateway_High_Availability/Default.htm
+
+Once Terraform template deployment is completed, follow steps from page 24/34 to configure the cluster object in Smart Console. 
  
