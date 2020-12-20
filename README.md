@@ -1,23 +1,28 @@
 # Terraform Environment
-This script is using Terraform v0.12.29 and AWS Provider v3.7.0 - Removed now deprecated interpolation-only synatx/ expression from script on 09/21/2020 as initial version leveraged TF 0.11 version. 
+Terraform v0.12.29 and AWS Provider version 3.22 
 
 ![alt text](https://github.com/etcheby/TGWHA/blob/master/TF-Environment.png)
 
-# AWS Environment
+# AWS Demo Environment
 Terraform Script for Check Point Cloudguard TGW HA deployment - Recommended for demos or POCs. Assumes you're willing to deploy Mgmt in AWS. Tweak script accordingly should you have on-prem Mgmt. This template creates an AWS TGW environment with: 
-* 2 spoke VPCs, 
+
+* 2 spoke VPCs, Spoke 1 Jump instance, Spoke 2 private instance.
 * 1 Check Point Mgmt VPC and Mgmt Instance, 
 * 1 Cloudguard IaaS HA security VPC, 
-* Relevant VPCs, Subnets RT, TGW attachments,TGW Route Tables, Spoke 1 Jump instance, Spoke 2 private instance. 
+* Relevant VPCs, Subnets RT, TGW attachments,TGW Route Tables 
 
 # Architecture Diagram
-![alt text](https://github.com/etcheby/TGWHA/blob/master/TGW-HA-Solution.png)
+![alt text](https://github.com/etcheby/TGWHA-Demo/blob/master/TGW-HA-Solution.png)
 
-# Authentication
+# Terrform Authentication & Provider & State File
 In this example I'm using local credentials file in the provider.tf file. Change path to local credentials file accordingly as well as desired region. It's a best practice not to hardcode your AWS credentials in your script - Other Authentication options for the AWS Provider can be found under the Authentication Section of Terraform AWS Provider Documentation. 
 * https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
 ![alt text](https://github.com/etcheby/TGWHA/blob/master/Authentication.png)
+
+It is also assumed that I'm using local backend for state file. Typical Production environment would require remote backend configuration which isn't covered here. 
+
+The AWS Provider is downloaded locally as well. Central provider path isn't covered in this example. 
 
 # Check Point TGW High Availability Admin Guide 
 * https://sc1.checkpoint.com/documents/IaaS/WebAdminGuides/EN/CP_CloudGuard_for_AWS_Transit_Gateway_High_Availability/Default.htm
