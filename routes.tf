@@ -4,7 +4,7 @@
 
 # Create a Management VPC route tables
 resource "aws_route_table" "mgmt_rt" {
-  vpc_id     = aws_vpc.mgmt_vpc.id
+  vpc_id = aws_vpc.mgmt_vpc.id
 
   # Route to the internet
   route {
@@ -14,16 +14,16 @@ resource "aws_route_table" "mgmt_rt" {
 
   # Route to Geocluster Instances 
   route {
-    cidr_block         = var.geocluster_vpc_cidr
+    cidr_block         = data.aws_vpc.geocluster_vpc.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   }
 
-tags = {
+  tags = {
     Name = "Mgmt"
   }
 }
 
-    # Mgmt Subnet RT Association
+# Mgmt Subnet RT Association
 resource "aws_route_table_association" "mgmt_rt_association" {
   subnet_id      = aws_subnet.mgmt_subnet.id
   route_table_id = aws_route_table.mgmt_rt.id
@@ -36,46 +36,34 @@ resource "aws_route_table_association" "mgmt_rt_association" {
 # Create Public Subnets RT
 
 resource "aws_route_table" "public_subnets_rt" {
-  vpc_id     = aws_vpc.geocluster_vpc.id
+  vpc_id = var.geocluster_vpc
 
-    # Route to the internet
+  # Route to the internet
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.geocluster_igw.id
   }
 
-    # Route to Check Point Mgmt
+  # Route to all Spokes & Including Mgmt (Using SuperNetwork)
   route {
-    cidr_block         = var.mgmt_vpc_cidr
+    cidr_block         = var.allspokes_cidr
     transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   }
 
-    # Route to Spoke1
- route {
-   cidr_block         = var.spoke1_vpc_cidr
-   transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
- }
-
-    # Route to Spoke2
- route {
-   cidr_block         = var.spoke2_vpc_cidr
-   transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
- }
-
-tags = {
-    Name = "Public Subnets"
+  tags = {
+    Name = "TGWHA-Public"
   }
 }
 
-    # Public Subnets Route Table Association
+# Public Subnets Route Table Association
 
 resource "aws_route_table_association" "public_subnet1_rt_association" {
-  subnet_id      = aws_subnet.public_subnet1.id
+  subnet_id      = var.public_subnet1
   route_table_id = aws_route_table.public_subnets_rt.id
 }
 
 resource "aws_route_table_association" "public_subnet2_rt_association" {
-  subnet_id      = aws_subnet.public_subnet2.id
+  subnet_id      = var.public_subnet2
   route_table_id = aws_route_table.public_subnets_rt.id
 }
 
@@ -84,29 +72,30 @@ resource "aws_route_table_association" "public_subnet2_rt_association" {
 #######    Spoke1 Route Table    ######
 #######################################
 
-# Create Spoke1 Subnet RT
+# Spoke1 Public Subnet RT
 
 resource "aws_route_table" "spoke1_subnet_rt" {
-  vpc_id     = aws_vpc.spoke1_vpc.id
+  vpc_id = aws_vpc.spoke1_vpc.id
 
-    # Inbound from Allowed_Source
+  # Inbound from Allowed_Source
+  # Comment out if Spoke 1 reacheable privately. No need from a jump route. 
   route {
     cidr_block = "24.200.180.8/32"
     gateway_id = aws_internet_gateway.spoke1_igw.id
   }
 
-    # Default Route
+  # Default Route
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_ec2_transit_gateway.transit_gateway.id
+    cidr_block         = "0.0.0.0/0"
+    transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   }
 
-tags = {
-    Name = "Spoke1"
+  tags = {
+    Name = "Spoke1-RT"
   }
 }
 
-    # Spoke1 Subnet Route Table Association
+# Spoke1 Subnet Route Table Association
 
 resource "aws_route_table_association" "spoke1_rt_association" {
   subnet_id      = aws_subnet.spoke1_subnet.id
@@ -120,20 +109,20 @@ resource "aws_route_table_association" "spoke1_rt_association" {
 # Create Spoke2 Subnet RT
 
 resource "aws_route_table" "spoke2_subnet_rt" {
-  vpc_id     = aws_vpc.spoke2_vpc.id
+  vpc_id = aws_vpc.spoke2_vpc.id
 
-    # Default Route
+  # Default Route
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_ec2_transit_gateway.transit_gateway.id
+    cidr_block         = "0.0.0.0/0"
+    transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   }
 
-tags = {
-    Name = "Spoke2"
+  tags = {
+    Name = "Spoke2-RT"
   }
 }
 
-    # Spoke2 Subnet Route Table Association
+# Spoke2 Subnet Route Table Association
 
 resource "aws_route_table_association" "spoke2_rt_association" {
   subnet_id      = aws_subnet.spoke2_subnet.id
@@ -149,7 +138,7 @@ resource "aws_route_table_association" "spoke2_rt_association" {
 resource "aws_ec2_transit_gateway_route_table" "tgw_security_rt" {
   transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   tags = {
-    Name        = "Security"
+    Name = "Security"
   }
 }
 
@@ -163,15 +152,15 @@ resource "aws_ec2_transit_gateway_route_table_association" "tgw_security_attachm
 # Propagate Security routes to Mgmt
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_security_attachment_propagation_to_mgmt" {
-transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.security_attachment.id
-transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_mgmt_rt.id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.security_attachment.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_mgmt_rt.id
 }
 
 # Propagate Security routes to Spokes
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_security_attachment_propagation_to_spokes" {
-transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.security_attachment.id
-transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_spokes_rt.id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.security_attachment.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_spokes_rt.id
 }
 
 #########################################
@@ -183,7 +172,7 @@ transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_spokes_
 resource "aws_ec2_transit_gateway_route_table" "tgw_mgmt_rt" {
   transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   tags = {
-    Name  = "Mgmt"
+    Name = "Mgmt"
   }
 }
 
@@ -197,8 +186,8 @@ resource "aws_ec2_transit_gateway_route_table_association" "tgw_mgmt_attachment_
 # Propagate Mgmt routes into Security VPC attachment
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_mgmt_attachment_propagation_to_geocluster" {
-transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.mgmt_attachment.id
-transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_security_rt.id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.mgmt_attachment.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_security_rt.id
 }
 
 ###########################################
@@ -210,7 +199,7 @@ transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_securit
 resource "aws_ec2_transit_gateway_route_table" "tgw_spokes_rt" {
   transit_gateway_id = aws_ec2_transit_gateway.transit_gateway.id
   tags = {
-    Name        = "Spokes"
+    Name = "Spokes"
   }
 }
 
@@ -229,11 +218,11 @@ resource "aws_ec2_transit_gateway_route_table_association" "tgw_spoke2_attachmen
 # Propagate Spokes routes into Security VPC attachment
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_spoke1_attachment_propagation_to_geocluster" {
-transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke1_vpc_attachment.id
-transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_security_rt.id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke1_vpc_attachment.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_security_rt.id
 }
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_spoke2_attachment_propagation_to_geocluster" {
-transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke2_vpc_attachment.id
-transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_security_rt.id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke2_vpc_attachment.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.tgw_security_rt.id
 }
