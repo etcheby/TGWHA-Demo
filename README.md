@@ -18,7 +18,7 @@ Terraform Script for Check Point Cloudguard TGW HA deployment - Recommended for 
 In this example I'm using local credentials file in the provider.tf file. Change path to local credentials file accordingly as well as desired region. It's a best practice not to hardcode your AWS credentials in your script - Other Authentication options for the AWS Provider can be found under the Authentication Section of Terraform AWS Provider Documentation. 
 * https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
-![alt text](https://github.com/etcheby/TGWHA/blob/master/Authentication.png)
+![alt text](https://github.com/etcheby/TGWHA/blob/master/TF-Authentication.png)
 
 It is also assumed that I'm using local backend for state file. Typical Production environment would require remote backend configuration which isn't covered here. 
 
