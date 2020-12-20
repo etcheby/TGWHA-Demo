@@ -26,11 +26,11 @@ The AWS Provider is downloaded locally as well. Central provider path isn't cove
 
 # Deployment Steps
 
-1- Download the Official Check Point CFTs YAMLs from SK111013 & review accepted values for CFT parameters. 
-2- Update the variables.tf
-2- Run Terraform init
-3- Terraform plan
-4- Terraform apply
+* Download the Official Check Point CFTs YAMLs from SK111013 & review accepted values for CFT parameters. 
+* Update the variables.tf
+* Run Terraform init
+* Terraform plan
+* Terraform apply
 
 # Check Point TGW High Availability Admin Guide 
 * https://sc1.checkpoint.com/documents/IaaS/WebAdminGuides/EN/CP_CloudGuard_for_AWS_Transit_Gateway_High_Availability/Default.htm
