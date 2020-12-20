@@ -6,81 +6,80 @@
 
 variable "geocluster_vpc" {
   description = "Check Point Geocluster VPC ID"
-  default     = "vpc-0edacf9d472218800"
+  default     = ""
 }
 
 variable "public_subnet1" {
   description = "Geocluster Public Subnet AZ1 ID"
-  default     = "subnet-084d86b05a3fd96d1"
+  default     = ""
 }
 
 variable "public_subnet2" {
   description = "Geocluster Public Subnet AZ2 ID"
-  default     = "subnet-06a2d40b49eb0ec44"
-}
+  default     = ""
 
 variable "private_subnet1" {
   description = "Geocluster Private Subnet AZ1 ID"
-  default     = "subnet-0f0250227671aed44"
+  default     = ""
 }
 
 variable "private_subnet2" {
   description = "Geocluster Private Subnet AZ2 ID"
-  default     = "subnet-05fda60a04e8c8a7f"
+  default     = ""
 }
 
 variable "tgw_subnet1" {
   description = "Geocluster TGW Subnet AZ1 ID"
-  default     = "subnet-0b842c0b8b1d593d9"
+  default     = ""
 }
 
 variable "tgw_subnet2" {
   description = "Geocluster TGW Subnet AZ2 ID"
-  default     = "subnet-06c382557d12c829a"
+  default     = ""
 }
 variable "tgwha_public_rt" {
-  description = "Subnet RT associated to geocluster public subnets"
-  default     = "rtb-0263aae2e8abb1bb5"
+  description = "Existing Subnet RT ID associated to geocluster public subnets"
+  default     = ""
 }
 
 variable "tgwha_private_rt" {
-  description = "Subnet RT associated to geocluster private subnets"
-  default     = "rtb-04570c8a15cd8b243"
+  description = "Subnet RT ID associated to geocluster private subnets"
+  default     = ""
 }
 
 # Spoke1 VPC & Subnets
 
 variable "spoke1_vpc" {
   description = "Spoke1 VPC"
-  default     = "10.1.0.0/16"
+  default     = ""
 }
 
 variable "spoke1_subnet" {
   description = "Spoke1 Subnet for test VM"
-  default     = "10.1.1.0/24"
+  default     = ""
 }
 
 # Spoke2 VPC & Subnets
 
 variable "spoke2_vpc" {
   description = "Spoke2 VPC"
-  default     = "10.2.0.0/16"
+  default     = ""
 }
 
 variable "spoke2_subnet" {
   description = "Spoke2 Subnet for test VM"
-  default     = "10.2.1.0/24"
+  default     = ""
 }
 
 # Management VPC
 variable "mgmt_vpc" {
   description = "Check Point Management VPC"
-  default     = "10.3.0.0/16"
+  default     = ""
 }
 
 variable "mgmt_subnet" {
   description = "Subnet for Check Point Mgmt"
-  default     = "10.3.1.0/24"
+  default     = ""
 }
 
 # Spokes SuperNetwork
@@ -125,7 +124,7 @@ variable "cpversion" {
 
 variable "key_name" {
   description = "Key Pair to SSH into Check Point instances"
-  default     = "Canada"
+  default     = ""
 }
 
 variable "mgmt_instance_type" {
@@ -152,8 +151,8 @@ variable "kmskey_identifier" {
 }
 
 variable "gateway_iamrole" {
-  description = "AWS IAM Role for Geocluster Instances API Failover"
-  default     = "Checkpoint_EA"
+  description = "IAM Role Name for Geocluster Instances API Failover"
+  default     = ""
 }
 
 variable "gateway_name" {
